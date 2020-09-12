@@ -1549,11 +1549,15 @@ export class Table implements OnInit, AfterViewInit, AfterContentInit, Blockable
     isEditingCellValid() {
         return (this.editingCell && DomHandler.find(this.editingCell, '.ng-invalid.ng-dirty').length === 0);
     }
+    
+    isFromOverlayTrigger(event) {
+      return event.path.some(path => path.className && path.className.includes('ng-trigger-overlayAnimation'));
+    }
 
     bindDocumentEditListener() {
         if (!this.documentEditListener) {
             this.documentEditListener = (event) => {
-                if (this.editingCell && !this.editingCellClick && this.isEditingCellValid()) {
+                if (!this.isFromOverlayTrigger(event) && this.editingCell && !this.editingCellClick && this.isEditingCellValid()) {
                     DomHandler.removeClass(this.editingCell, 'p-cell-editing');
                     this.editingCell = null;
                     this.onEditComplete.emit({ field: this.editingCellField, data: this.editingCellData, originalEvent: event, index: this.editingCellRowIndex });
